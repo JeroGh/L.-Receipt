@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laundry Receipt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+
+    .receipt-container {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 28rem;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .header-info {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      color: #4b5563;
+    }
+
+    hr {
+      margin: 1rem 0;
+      border: 0;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .item-header {
+      display: grid;
+      grid-template-columns: 1fr 0.75fr 1fr 1fr;
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr 0.75fr 1fr 1fr;
+      align-items: center;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      gap: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    input[type="number"] {
+      appearance: textfield;
+    }
+
+    .total-section {
+      font-size: 0.875rem;
+      margin-top: 1rem;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .thank-you {
+      text-align: center;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      color: #4b5563;
+    }
+
+    button#add-item {
+      width: 100%;
+      background-color: #10b981;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      border: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background-color 0.2s;
+    }
+
+    button#add-item:hover {
+      background-color: #059669;
+    }
+
+    button#download-pdf {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background-color: #3b82f6;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      border: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button#download-pdf:hover {
+      background-color: #2563eb;
+    }
+
+    .no-print {
+      display: block;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .item-header {
+        grid-template-columns: 1fr 0.5fr 0.75fr 0.75fr;
+      }
+
+      .item-row {
+        grid-template-columns: 1fr 0.5fr 0.75fr 0.75fr;
+        gap: 0.25rem;
+      }
+
+      input {
+        padding: 0.25rem;
+      }
+
+      button#download-pdf {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+      }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="receipt-container" id="receipt">
+    <button id="download-pdf" class="no-print">Download PDF</button>
+    <h1>Laundry Receipt</h1>
+    <div class="header-info">
+      <p>CET Laundry</p>
+      <p>Miotso Junction, Ghana</p>
+      <p id="date">Date: </p>
+    </div>
+    <hr>
+    <div id="items-section">
+      <div class="item-header">
+        <span>Item</span>
+        <span>Qty</span>
+        <span>Price (GHS)</span>
+        <span>Total</span>
+      </div>
+      <div class="item-row">
+        <input type="text" value="Shirt" class="item-name">
+        <input type="number" value="2" min="0" class="item-qty">
+        <input type="number" value="10.00" min="0" step="0.01" class="item-price">
+        <span class="item-total">GHS 20.00</span>
+      </div>
+      <div class="item-row">
+        <input type="text" value="Trousers" class="item-name">
+        <input type="number" value="1" min="0" class="item-qty">
+        <input type="number" value="15.00" min="0" step="0.01" class="item-price">
+        <span class="item-total">GHS 15.00</span>
+      </div>
+      <div class="item-row">
+        <input type="text" value="Bed Sheet" class="item-name">
+        <input type="number" value="1" min="0" class="item-qty">
+        <input type="number" value="20.00" min="0" step="0.01" class="item-price">
+        <span class="item-total">GHS 20.00</span>
+      </div>
+    </div>
+    <button id="add-item" class="no-print">Add New Item</button>
+    <hr>
+    <div class="total-section">
+      <div class="total-row bold"><span>Total</span><span id="total">GHS 55.00</span></div>
+    </div>
+    <div class="thank-you">Thank you for choosing CleanWave Laundry!</div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateElement = document.getElementById('date');
+      dateElement.textContent = `Date: ${new Date().toLocaleDateString()}`;
+
+      const itemsSection = document.getElementById('items-section');
+      const totalElement = document.getElementById('total');
+
+      function calculateTotals() {
+        let total = 0;
+        const rows = itemsSection.querySelectorAll('.item-row');
+        rows.forEach(row => {
+          const qty = parseInt(row.querySelector('.item-qty').value) || 0;
+          const price = parseFloat(row.querySelector('.item-price').value) || 0;
+          const itemTotal = qty * price;
+          row.querySelector('.item-total').textContent = `GHS ${itemTotal.toFixed(2)}`;
+          total += itemTotal;
+        });
+        totalElement.textContent = `GHS ${total.toFixed(2)}`;
+      }
+
+      itemsSection.addEventListener('input', calculateTotals);
+
+      document.getElementById('add-item').addEventListener('click', () => {
+        const newRow = document.createElement('div');
+        newRow.classList.add('item-row');
+        newRow.innerHTML = `
+          <input type="text" value="" placeholder="Item name" class="item-name">
+          <input type="number" value="1" min="0" class="item-qty">
+          <input type="number" value="0.00" min="0" step="0.01" class="item-price">
+          <span class="item-total">GHS 0.00</span>
+        `;
+        itemsSection.appendChild(newRow);
+        calculateTotals();
+      });
+
+      document.getElementById('download-pdf').addEventListener('click', async () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const element = document.getElementById('receipt');
+        const downloadButton = document.getElementById('download-pdf');
+        const addItemButton = document.getElementById('add-item');
+        
+        // Temporarily hide both buttons
+        downloadButton.style.display = 'none';
+        addItemButton.style.display = 'none';
+        
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = 190; // mm
+        const pageHeight = doc.internal.pageSize.height;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 10;
+
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Restore both buttons' visibility
+        downloadButton.style.display = 'block';
+        addItemButton.style.display = 'block';
+        
+        doc.save('laundry-receipt.pdf');
+      });
+
+      calculateTotals();
+    });
+  </script>
+</body>
+</html>
