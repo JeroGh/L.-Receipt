@@ -3,285 +3,234 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Laundry Receipt</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f3f4f6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1rem;
-    }
-
-    .receipt-container {
-      background-color: white;
-      padding: 1.5rem;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 28rem;
-      position: relative;
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .header-info {
-      text-align: center;
-      margin-bottom: 1rem;
-      font-size: 0.875rem;
-      color: #4b5563;
-    }
-
-    hr {
-      margin: 1rem 0;
-      border: 0;
-      border-top: 1px solid #e5e7eb;
-    }
-
-    .item-header {
-      display: grid;
-      grid-template-columns: 1fr 0.75fr 1fr 1fr;
-      font-weight: 600;
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .item-row {
-      display: grid;
-      grid-template-columns: 1fr 0.75fr 1fr 1fr;
-      align-items: center;
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-      gap: 0.5rem;
-    }
-
-    input {
-      width: 100%;
-      border: 1px solid #d1d5db;
-      border-radius: 0.25rem;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-    }
-
-    input[type="number"] {
-      appearance: textfield;
-    }
-
-    .total-section {
-      font-size: 0.875rem;
-      margin-top: 1rem;
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.25rem;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .thank-you {
-      text-align: center;
-      font-size: 0.875rem;
-      margin-top: 1rem;
-      color: #4b5563;
-    }
-
-    button#add-item {
-      width: 100%;
-      background-color: #10b981;
-      color: white;
-      padding: 0.5rem;
-      border-radius: 0.25rem;
-      border: none;
-      font-size: 0.875rem;
-      cursor: pointer;
-      margin-top: 1rem;
-      transition: background-color 0.2s;
-    }
-
-    button#add-item:hover {
-      background-color: #059669;
-    }
-
-    button#download-pdf {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background-color: #3b82f6;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      border: none;
-      font-size: 0.75rem;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    button#download-pdf:hover {
-      background-color: #2563eb;
-    }
-
-    .no-print {
-      display: block;
-    }
-
-    @media print {
-      .no-print {
-        display: none !important;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .item-header {
-        grid-template-columns: 1fr 0.5fr 0.75fr 0.75fr;
-      }
-
-      .item-row {
-        grid-template-columns: 1fr 0.5fr 0.75fr 0.75fr;
-        gap: 0.25rem;
-      }
-
-      input {
-        padding: 0.25rem;
-      }
-
-      button#download-pdf {
-        font-size: 0.65rem;
-        padding: 0.2rem 0.4rem;
-      }
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta name="description" content="Professional laundry order and receipt manager for CET Laundry.">
+  <title>CET Laundry | Order Desk</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha384-JcnsjUPPylna1s1fvi1u12X5qjY5OL56iySh75FdtrwhO/SWXgMjoVqcKyIIWOLk" crossorigin="anonymous"></script>
 </head>
 <body>
-  <div class="receipt-container" id="receipt">
-    <button id="download-pdf" class="no-print">Download PDF</button>
-    <h1>Laundry Receipt</h1>
-    <div class="header-info">
-      <p>CET Laundry</p>
-      <p>Miotso Junction, Ghana</p>
-      <p id="date">Date: </p>
+  <header class="topbar no-print">
+    <div class="brand">
+      <div class="brand-mark">CW</div>
+      <div><strong>CET Laundry</strong><span>Laundry operations</span></div>
     </div>
-    <hr>
-    <div id="items-section">
-      <div class="item-header">
-        <span>Item</span>
-        <span>Qty</span>
-        <span>Price (GHS)</span>
-        <span>Total</span>
-      </div>
-      <div class="item-row">
-        <input type="text" value="Shirt" class="item-name">
-        <input type="number" value="2" min="0" class="item-qty">
-        <input type="number" value="10.00" min="0" step="0.01" class="item-price">
-        <span class="item-total">GHS 20.00</span>
-      </div>
-      <div class="item-row">
-        <input type="text" value="Trousers" class="item-name">
-        <input type="number" value="1" min="0" class="item-qty">
-        <input type="number" value="15.00" min="0" step="0.01" class="item-price">
-        <span class="item-total">GHS 15.00</span>
-      </div>
-      <div class="item-row">
-        <input type="text" value="Bed Sheet" class="item-name">
-        <input type="number" value="1" min="0" class="item-qty">
-        <input type="number" value="20.00" min="0" step="0.01" class="item-price">
-        <span class="item-total">GHS 20.00</span>
-      </div>
+    <div class="topbar-actions">
+      <span class="save-state" id="save-state">All changes saved</span>
+      <button class="button button-ghost" id="reset-order" type="button">New order</button>
+      <button class="button button-primary" id="download-pdf" type="button">Download PDF</button>
     </div>
-    <button id="add-item" class="no-print">Add New Item</button>
-    <hr>
-    <div class="total-section">
-      <div class="total-row bold"><span>Total</span><span id="total">GHS 55.00</span></div>
+  </header>
+
+  <main class="workspace">
+    <section class="page-heading no-print">
+      <div>
+        <p class="eyebrow">Order desk <span class="live-dot"></span> Ready</p>
+        <h1>Create laundry order</h1>
+        <p class="muted">Capture the customer details, services and payment in one place.</p>
+      </div>
+      <div class="order-number">
+        <span>Order number</span>
+        <strong id="order-number"></strong>
+      </div>
+    </section>
+
+    <div class="dashboard-grid">
+      <form class="editor-column no-print" id="order-form">
+        <section class="card">
+          <div class="card-heading"><div><p class="section-kicker">01</p><h2>Customer details</h2></div><span class="status-pill status-blue">Required</span></div>
+          <div class="form-grid">
+            <label class="field field-wide">Customer name<input id="customer-name" name="customerName" type="text" placeholder="e.g. Ama Mensah" required></label>
+            <label class="field">Phone number<input id="customer-phone" name="customerPhone" type="tel" placeholder="+233 24 000 0000"></label>
+            <label class="field field-wide">Collection / delivery address<input id="customer-address" name="customerAddress" type="text" placeholder="Optional address"></label>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-heading"><div><p class="section-kicker">02</p><h2>Services</h2></div><span class="items-count" id="items-count">0 items</span></div>
+          <div class="service-table">
+            <div class="service-head"><span>Service / item</span><span>Qty</span><span>Unit price</span><span>Total</span><span></span></div>
+            <div id="items-section"></div>
+          </div>
+          <button class="button button-add" id="add-item" type="button"><span>+</span> Add service</button>
+        </section>
+
+        <section class="card">
+          <div class="card-heading"><div><p class="section-kicker">03</p><h2>Order & payment</h2></div></div>
+          <div class="form-grid">
+            <label class="field">Order status<select id="order-status"><option>Received</option><option>Processing</option><option>Ready for collection</option><option>Completed</option><option>Cancelled</option></select></label>
+            <label class="field">Payment method<select id="payment-method"><option>Cash</option><option>Mobile Money</option><option>Card</option><option>Bank transfer</option><option>Pay later</option></select></label>
+            <label class="field">Collection date<input id="collection-date" type="date"></label>
+            <label class="field">Discount (GHS)<input id="discount" type="number" min="0" step="0.01" value="0"></label>
+            <label class="field">Delivery fee (GHS)<input id="delivery-fee" type="number" min="0" step="0.01" value="0"></label>
+          </div>
+          <label class="field notes-field">Order notes<textarea id="order-notes" rows="3" placeholder="Special instructions, stains, garment condition..."></textarea></label>
+        </section>
+      </form>
+
+      <aside class="preview-column">
+        <div class="preview-toolbar no-print"><span><span class="preview-dot"></span> Live preview</span><button class="button button-ghost button-small" id="print-order" type="button">Print receipt</button></div>
+        <article class="receipt" id="receipt">
+          <div class="receipt-top">
+            <div class="receipt-brand"><div class="receipt-logo">CET</div><div><h2>CET Laundry</h2><p>Professional laundry care</p></div></div>
+            <div class="receipt-status" id="receipt-status">RECEIVED</div>
+          </div>
+          <div class="business-details"><span>Miotso Junction, Ghana</span><span>CET Laundry</span><span>Contact at collection desk</span></div>
+          <div class="receipt-meta"><div><span>Receipt no.</span><strong id="receipt-number"></strong></div><div><span>Issued</span><strong id="receipt-date"></strong></div><div><span>Collection</span><strong id="receipt-collection">—</strong></div></div>
+          <div class="customer-block"><p class="receipt-label">BILLED TO</p><strong id="receipt-customer">Walk-in customer</strong><span id="receipt-contact">No contact provided</span><span id="receipt-address"></span></div>
+          <div class="receipt-items"><div class="receipt-items-head"><span>DESCRIPTION</span><span>QTY</span><span>AMOUNT</span></div><div id="receipt-items"></div></div>
+          <div class="receipt-summary"><div><span>Subtotal</span><strong id="receipt-subtotal">GHS 0.00</strong></div><div><span>Delivery fee</span><strong id="receipt-delivery">GHS 0.00</strong></div><div><span>Discount</span><strong id="receipt-discount">− GHS 0.00</strong></div><div class="grand-total"><span>Total due</span><strong id="receipt-total">GHS 0.00</strong></div></div>
+          <div class="payment-line"><span>Payment: <strong id="receipt-payment">Cash</strong></span><span id="payment-state">PAYMENT DUE</span></div>
+          <div class="receipt-notes" id="receipt-notes"></div>
+          <footer class="receipt-footer"><strong>Thank you for choosing CET Laundry!</strong><span>Quality care for every garment.</span></footer>
+        </article>
+        <p class="preview-help no-print">Review the receipt before downloading or printing. Your draft is saved automatically on this device.</p>
+      </aside>
     </div>
-    <div class="thank-you">Thank you for choosing CleanWave Laundry!</div>
-  </div>
+  </main>
+  <datalist id="service-options">
+    <option value="Washing only"></option>
+    <option value="Washing and Ironing"></option>
+    <option value="Ironing only"></option>
+  </datalist>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const dateElement = document.getElementById('date');
-      dateElement.textContent = `Date: ${new Date().toLocaleDateString()}`;
+      const $ = (selector) => document.querySelector(selector);
+      const itemsSection = $('#items-section');
+      const receiptItems = $('#receipt-items');
+      const storageKey = 'cet-laundry-order-draft';
+      const today = new Date();
+      const formatMoney = (amount) => `GHS ${amount.toFixed(2)}`;
+      const formatDate = (value) => value ? new Date(`${value}T00:00:00`).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+      const makeOrderNumber = () => `CET-${today.getFullYear()}-${String(today.getTime()).slice(-6)}`;
+      let orderNumber = localStorage.getItem('cet-laundry-order-number') || makeOrderNumber();
+      localStorage.setItem('cet-laundry-order-number', orderNumber);
+      $('#order-number').textContent = orderNumber;
+      $('#receipt-number').textContent = orderNumber;
+      $('#receipt-date').textContent = formatDate(today.toISOString().slice(0, 10));
+      $('#collection-date').value = new Date(today.getTime() + 86400000 * 2).toISOString().slice(0, 10);
 
-      const itemsSection = document.getElementById('items-section');
-      const totalElement = document.getElementById('total');
+      const services = ['Washing only', 'Washing and Ironing', 'Ironing only'];
 
-      function calculateTotals() {
-        let total = 0;
-        const rows = itemsSection.querySelectorAll('.item-row');
-        rows.forEach(row => {
-          const qty = parseInt(row.querySelector('.item-qty').value) || 0;
-          const price = parseFloat(row.querySelector('.item-price').value) || 0;
-          const itemTotal = qty * price;
-          row.querySelector('.item-total').textContent = `GHS ${itemTotal.toFixed(2)}`;
-          total += itemTotal;
-        });
-        totalElement.textContent = `GHS ${total.toFixed(2)}`;
+      function addItem(item = {}) {
+        const row = document.createElement('div');
+        row.className = 'service-row';
+        row.innerHTML = `<input class="item-name" list="service-options" type="text" value="${item.name || services[0]}" aria-label="Service"><input class="item-qty" type="number" min="1" step="1" value="${item.qty || 1}" aria-label="Quantity"><div class="price-input"><span>GHS</span><input class="item-price" type="number" min="0" step="0.01" value="${item.price ?? 10}" aria-label="Unit price"></div><strong class="item-total">GHS 0.00</strong><button class="remove-item" type="button" aria-label="Remove service">×</button>`;
+        itemsSection.appendChild(row);
+        calculateTotals();
       }
 
-      itemsSection.addEventListener('input', calculateTotals);
+      function numberValue(input) {
+        const value = Number(input.value);
+        return Number.isFinite(value) && value >= 0 ? value : 0;
+      }
 
-      document.getElementById('add-item').addEventListener('click', () => {
-        const newRow = document.createElement('div');
-        newRow.classList.add('item-row');
-        newRow.innerHTML = `
-          <input type="text" value="" placeholder="Item name" class="item-name">
-          <input type="number" value="1" min="0" class="item-qty">
-          <input type="number" value="0.00" min="0" step="0.01" class="item-price">
-          <span class="item-total">GHS 0.00</span>
-        `;
-        itemsSection.appendChild(newRow);
+      function calculateTotals() {
+        let subtotal = 0;
+        const rows = [...itemsSection.querySelectorAll('.service-row')];
+        rows.forEach(row => {
+          const qty = Math.max(0, Math.floor(numberValue(row.querySelector('.item-qty'))));
+          const price = numberValue(row.querySelector('.item-price'));
+          const amount = qty * price;
+          row.querySelector('.item-total').textContent = formatMoney(amount);
+          subtotal += amount;
+        });
+        const delivery = numberValue($('#delivery-fee'));
+        const discount = Math.min(numberValue($('#discount')), subtotal + delivery);
+        const total = subtotal + delivery - discount;
+        $('#items-count').textContent = `${rows.length} ${rows.length === 1 ? 'item' : 'items'}`;
+        $('#receipt-subtotal').textContent = formatMoney(subtotal);
+        $('#receipt-delivery').textContent = formatMoney(delivery);
+        $('#receipt-discount').textContent = `− ${formatMoney(discount)}`;
+        $('#receipt-total').textContent = formatMoney(total);
+        receiptItems.innerHTML = rows.map(row => `<div class="receipt-item"><span>${row.querySelector('.item-name').value}</span><span>${Math.floor(numberValue(row.querySelector('.item-qty')))}</span><strong>${formatMoney(Math.floor(numberValue(row.querySelector('.item-qty'))) * numberValue(row.querySelector('.item-price')))}</strong></div>`).join('') || '<div class="empty-receipt">No services added</div>';
+        saveDraft();
+      }
+
+      function updatePreview() {
+        const name = $('#customer-name').value.trim();
+        const phone = $('#customer-phone').value.trim();
+        const status = $('#order-status').value;
+        $('#receipt-customer').textContent = name || 'Walk-in customer';
+        $('#receipt-contact').textContent = phone || 'No contact provided';
+        $('#receipt-address').textContent = $('#customer-address').value.trim();
+        $('#receipt-status').textContent = status.toUpperCase();
+        $('#receipt-payment').textContent = $('#payment-method').value;
+        $('#receipt-collection').textContent = formatDate($('#collection-date').value);
+        $('#payment-state').textContent = $('#payment-method').value === 'Pay later' ? 'PAYMENT DUE' : 'PAYMENT RECEIVED';
+        $('#receipt-notes').innerHTML = $('#order-notes').value.trim() ? `<span class="receipt-label">NOTES</span><p>${$('#order-notes').value.trim().replace(/[<>&]/g, character => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;' })[character])}</p>` : '';
         calculateTotals();
+      }
+
+      function saveDraft() {
+        const data = {};
+        document.querySelectorAll('#order-form input, #order-form select, #order-form textarea').forEach(input => { data[input.id] = input.value; });
+        data.items = [...itemsSection.querySelectorAll('.service-row')].map(row => ({ name: row.querySelector('.item-name').value, qty: row.querySelector('.item-qty').value, price: row.querySelector('.item-price').value }));
+        localStorage.setItem(storageKey, JSON.stringify(data));
+        $('#save-state').textContent = 'All changes saved';
+      }
+
+      function loadDraft() {
+        const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+        if (!saved) { addItem({ name: services[0], qty: 1, price: 10 }); addItem({ name: services[1], qty: 1, price: 15 }); addItem({ name: services[2], qty: 1, price: 10 }); return; }
+        Object.entries(saved).forEach(([id, value]) => { const element = document.getElementById(id); if (element && typeof value === 'string') element.value = value; });
+        (saved.items || []).forEach(addItem);
+      }
+
+      $('#add-item').addEventListener('click', () => addItem());
+      itemsSection.addEventListener('input', updatePreview);
+      itemsSection.addEventListener('change', updatePreview);
+      itemsSection.addEventListener('click', (event) => { if (event.target.classList.contains('remove-item')) { event.target.closest('.service-row').remove(); updatePreview(); } });
+      $('#order-form').addEventListener('input', updatePreview);
+      $('#order-form').addEventListener('change', updatePreview);
+      $('#print-order').addEventListener('click', () => window.print());
+      $('#reset-order').addEventListener('click', () => { if (window.confirm('Start a new order? The current draft will be cleared.')) { localStorage.removeItem(storageKey); localStorage.removeItem('cet-laundry-order-number'); window.location.reload(); } });
+      $('#download-pdf').addEventListener('click', async () => {
+        const button = $('#download-pdf');
+        try {
+          if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function' || typeof window.html2canvas !== 'function') throw new Error('PDF tools unavailable');
+          button.disabled = true; button.textContent = 'Preparing...';
+          const source = $('#receipt');
+          const capture = source.cloneNode(true);
+          capture.classList.add('pdf-capture');
+          capture.removeAttribute('id');
+          document.body.appendChild(capture);
+          let canvas;
+          try {
+            canvas = await window.html2canvas(capture, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+          } finally {
+            capture.remove();
+          }
+
+          const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+          const margin = 15;
+          const contentWidth = doc.internal.pageSize.getWidth() - margin * 2;
+          const contentHeight = doc.internal.pageSize.getHeight() - margin * 2;
+          const sourcePageHeight = Math.floor(canvas.width * contentHeight / contentWidth);
+          let offset = 0;
+          let page = 0;
+
+          while (offset < canvas.height) {
+            const sliceHeight = Math.min(sourcePageHeight, canvas.height - offset);
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.width = canvas.width;
+            pageCanvas.height = sliceHeight;
+            pageCanvas.getContext('2d').drawImage(canvas, 0, offset, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+            if (page > 0) doc.addPage();
+            doc.addImage(pageCanvas.toDataURL('image/png'), 'PNG', margin, margin, contentWidth, sliceHeight * contentWidth / canvas.width);
+            offset += sliceHeight;
+            page += 1;
+          }
+          doc.save(`${orderNumber}.pdf`);
+          showToast('Receipt downloaded successfully');
+        } catch (error) { console.error(error); showToast('Could not generate the PDF. Try printing instead.', true); }
+        finally { button.disabled = false; button.textContent = 'Download PDF'; }
       });
-
-      document.getElementById('download-pdf').addEventListener('click', async () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const element = document.getElementById('receipt');
-        const downloadButton = document.getElementById('download-pdf');
-        const addItemButton = document.getElementById('add-item');
-        
-        // Temporarily hide both buttons
-        downloadButton.style.display = 'none';
-        addItemButton.style.display = 'none';
-        
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = 190; // mm
-        const pageHeight = doc.internal.pageSize.height;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 10;
-
-        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
-          doc.addPage();
-          doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-
-        // Restore both buttons' visibility
-        downloadButton.style.display = 'block';
-        addItemButton.style.display = 'block';
-        
-        doc.save('laundry-receipt.pdf');
-      });
-
-      calculateTotals();
+      function showToast(message, error = false) { const toast = $('#toast'); toast.textContent = message; toast.className = `toast visible ${error ? 'toast-error' : ''}`; setTimeout(() => { toast.className = 'toast'; }, 3000); }
+      loadDraft();
+      updatePreview();
     });
   </script>
 </body>
